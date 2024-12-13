@@ -40,6 +40,8 @@ class LinkedinEasyApply:
         self.personal_info = parameters.get('personalInfo', [])
         self.eeo = parameters.get('eeo', [])
         self.experience_default = int(self.experience['default'])
+        self.W2 = parameters.get('W2', [])
+        self.office = parameters.get('office', [])
 
     def login(self):
         try:
@@ -132,11 +134,18 @@ class LinkedinEasyApply:
                 print("Sleeping for " + str(time_left) + " seconds.")
                 time.sleep(time_left)
                 minimum_page_time = time.time() + minimum_time
+                
             if page_sleep % 5 == 0:
                 sleep_time = random.randint(500, 900)
                 print("Sleeping for " + str(sleep_time / 60) + " minutes.")
                 time.sleep(sleep_time)
                 page_sleep += 1
+            # if page_sleep % 5 == 0:
+            #     sleep_time = random.randint(1800, 2400)  # 30 to 40 minutes in seconds
+            #     print(f"Sleeping for {sleep_time / 60} minutes.")
+            #     time.sleep(sleep_time)
+            #     page_sleep += 1
+
 
     def apply_jobs(self, location):
         no_jobs_text = ""
@@ -161,12 +170,23 @@ class LinkedinEasyApply:
             raise Exception("Nothing to do here, moving forward...")
 
         try:
-            job_results = self.browser.find_element(By.CLASS_NAME, "jobs-search-results-list")
-            self.scroll_slow(job_results)
-            self.scroll_slow(job_results, step=300, reverse=True)
+            child_element = self.browser.find_element(By.CLASS_NAME, "scaffold-layout__list-item")
+            # Find the immediate parent element
+            parent_element = child_element.find_element(By.XPATH, "..")
+            # Get the tag name (type) of the parent element
+            parent_type = parent_element.tag_name
+            print(f"Parent Element Type: {parent_type}")
+            # Get the class name of the parent element
+            parent_class_name = parent_element.get_attribute("class")
+            print(f"Parent Class Name: {parent_class_name}")
 
-            job_list = self.browser.find_elements(By.CLASS_NAME, 'scaffold-layout__list-container')[0].find_elements(
-                By.CLASS_NAME, 'jobs-search-results__list-item')
+            job_results = self.browser.find_element(By.CLASS_NAME, parent_class_name)
+            # self.scroll_slow(job_results)
+            # self.scroll_slow(job_results, step=300, reverse=True)
+
+            job_list = self.browser.find_elements(By.CLASS_NAME, parent_class_name)[0].find_elements(
+                By.CLASS_NAME, 'scaffold-layout__list-item')
+            
             if len(job_list) == 0:
                 raise Exception("No job class elements found in page")
         except:
@@ -181,14 +201,14 @@ class LinkedinEasyApply:
             try:
                 ## patch to incorporate new 'verification' crap by LinkedIn
                 # job_title = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').text # original code
-                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                job_title_element = job_tile.find_element(By.CLASS_NAME, 'job-card-container__link')
                 job_title = job_title_element.find_element(By.TAG_NAME, 'strong').text
 
-                link = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title').get_attribute('href').split('?')[0]
+                link = job_tile.find_element(By.CLASS_NAME, 'job-card-container__link').get_attribute('href').split('?')[0]
             except:
                 pass
             try:
-                company = job_tile.find_element(By.CLASS_NAME, 'job-card-container__primary-description').text
+                company = job_tile.find_element(By.CLASS_NAME, 'artdeco-entity-lockup__subtitle').text
             except:
                 pass
             try:
@@ -225,7 +245,7 @@ class LinkedinEasyApply:
                     retries = 0
                     while retries < max_retries:
                         try:
-                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title')
+                            job_el = job_tile.find_element(By.CLASS_NAME, 'job-card-list__title--link')
                             job_el.click()
                             break
 
@@ -271,37 +291,54 @@ class LinkedinEasyApply:
         easy_apply_button = None
 
         try:
+            print("Looking for the 'Easy Apply' button...")
             easy_apply_button = self.browser.find_element(By.CLASS_NAME, 'jobs-apply-button')
+            print("'Easy Apply' button found.")
         except:
+            print("Could not find the 'Easy Apply' button. Skipping this job.")
             return False
 
         try:
+            print("Scrolling through the job description area...")
             job_description_area = self.browser.find_element(By.CLASS_NAME, "jobs-search__job-details--container")
             self.scroll_slow(job_description_area, end=1600)
             self.scroll_slow(job_description_area, end=1600, step=400, reverse=True)
+            print("Scrolled through the job description area.")
         except:
-            pass
+            print("Could not scroll through the job description area. Continuing without scrolling.")
 
-        print("Starting the job application...")
-        easy_apply_button.click()
+        print("Starting the job application process...")
+        try:
+            easy_apply_button.click()
+            print("'Easy Apply' button clicked.")
+        except:
+            print("Failed to click 'Easy Apply' button. Exiting application process.")
+            return False
 
         button_text = ""
         submit_application_text = 'submit application'
+
         while submit_application_text not in button_text.lower():
             try:
+                print("Filling up the application form...")
                 self.fill_up()
                 next_button = self.browser.find_element(By.CLASS_NAME, "artdeco-button--primary")
                 button_text = next_button.text.lower()
+                print(f"Current button text: {button_text}")
+
                 if submit_application_text in button_text:
                     try:
+                        print("Attempting to unfollow the company...")
                         self.unfollow()
+                        print("Unfollowed the company successfully.")
                     except:
-                        print("Failed to unfollow company.")
+                        print("Failed to unfollow the company.")
+
                 time.sleep(random.uniform(1.5, 2.5))
+                print("Clicking the 'Next' button...")
                 next_button.click()
                 time.sleep(random.uniform(3.0, 5.0))
 
-                # Newer error handling
                 error_messages = [
                     'enter a valid',
                     'enter a decimal',
@@ -317,44 +354,59 @@ class LinkedinEasyApply:
                     'Introduce un número de whole entre',
                     'Preguntas adicionales',
                     'Insira um um número',
-                    'Cuántos años'
+                    'Cuántos años',
                     'use the format'
                 ]
 
                 if any(error in self.browser.page_source.lower() for error in error_messages):
+                    print("Error in answering required questions or uploading files.")
                     raise Exception("Failed answering required questions or uploading required files.")
+
             except:
+                print("An error occurred during the application process.")
                 traceback.print_exc()
-                self.browser.find_element(By.CLASS_NAME, 'artdeco-modal__dismiss').click()
-                time.sleep(random.uniform(3, 5))
-                self.browser.find_elements(By.CLASS_NAME, 'artdeco-modal__confirm-dialog-btn')[0].click()
-                time.sleep(random.uniform(3, 5))
+                try:
+                    print("Attempting to dismiss the modal...")
+                    self.browser.find_element(By.CLASS_NAME, 'artdeco-modal__dismiss').click()
+                    time.sleep(random.uniform(3, 5))
+                    self.browser.find_elements(By.CLASS_NAME, 'artdeco-modal__confirm-dialog-btn')[0].click()
+                    time.sleep(random.uniform(3, 5))
+                except:
+                    print("Failed to close the modal.")
                 raise Exception("Failed to apply to job!")
 
         closed_notification = False
         time.sleep(random.uniform(3, 5))
         try:
+            print("Closing the application modal...")
             self.browser.find_element(By.CLASS_NAME, 'artdeco-modal__dismiss').click()
             closed_notification = True
         except:
-            pass
+            print("No application modal to close.")
+
         try:
+            print("Dismissing the toast notification...")
             self.browser.find_element(By.CLASS_NAME, 'artdeco-toast-item__dismiss').click()
             closed_notification = True
         except:
-            pass
+            print("No toast notification to dismiss.")
+
         try:
+            print("Clicking the 'Save Application' button...")
             self.browser.find_element(By.CSS_SELECTOR, 'button[data-control-name="save_application_btn"]').click()
             closed_notification = True
         except:
-            pass
+            print("No 'Save Application' button to click.")
 
         time.sleep(random.uniform(3, 5))
 
         if closed_notification is False:
+            print("Could not close the application confirmation window!")
             raise Exception("Could not close the applied confirmation window!")
 
+        print("Application completed successfully!")
         return True
+
 
     def home_address(self, element):
         try:
@@ -569,7 +621,7 @@ class LinkedinEasyApply:
 
                     if text_field_type == 'numeric':
                         if not isinstance(to_enter, (int, float)):
-                            to_enter = 0
+                            to_enter = 8
                     elif to_enter == '':
                         to_enter = " ‏‏‎ "
 
@@ -694,6 +746,32 @@ class LinkedinEasyApply:
                         if choice == "":
                             choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
+# //newly added
+                    elif 'W2' in question_text:
+                        answer = self.W2
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+                        if choice == "":
+                            choice = options[len(options) - 1]
+                        self.select_dropdown(dropdown_field, choice)
+                    
+                    elif 'office' in question_text:
+                        answer = self.office
+                        choice = ""
+                        for option in options:
+                            if answer == 'yes':
+                                choice = option
+                            else:
+                                if 'no' in option.lower():
+                                    choice = option
+                        if choice == "":
+                            choice = options[len(options) - 1]
+                        self.select_dropdown(dropdown_field, choice)
 
                     elif 'authorized' in question_text or 'authorised' in question_text:
                         answer = self.get_answer('legallyAuthorized')
@@ -753,7 +831,8 @@ class LinkedinEasyApply:
                         continue  # assume email address is filled in properly by default
 
                     elif 'experience' in question_text or 'understanding' in question_text or 'familiar' in question_text or 'comfortable' in question_text or 'able to' in question_text:
-                        answer = 'no'
+                        #changed from No to Yes
+                        answer = 'Yes'
                         for experience in self.experience:
                             if experience.lower() in question_text and self.experience[experience] > 0:
                                 answer = 'yes'
@@ -769,16 +848,20 @@ class LinkedinEasyApply:
                         if choice == "":
                             choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
-
+                
                     else:
+                        # Fallback mechanism: Attempt to select "Yes" if available in the dropdown options
                         choice = ""
                         for option in options:
                             if 'yes' in option.lower():
                                 choice = option
+                                break  # Stop once "Yes" is found
                         if choice == "":
+                            # If "Yes" is not found, select the last option as a default
                             choice = options[len(options) - 1]
                         self.select_dropdown(dropdown_field, choice)
                         self.record_unprepared_question("dropdown", question_text)
+
                     continue
                 except:
                     pass
@@ -937,51 +1020,91 @@ class LinkedinEasyApply:
         time.sleep(1.0)
         pyautogui.press('esc')
 
+    # def get_base_search_url(self, parameters):
+    #     remote_url = ""
+    #     lessthanTenApplicants_url = ""
+
+    #     if parameters.get('remote'):
+    #         remote_url = "&f_WT=2"
+    #     else:
+    #         remote_url = ""
+    #         # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
+
+    #     if parameters['lessthanTenApplicants']:
+    #         lessthanTenApplicants_url = "&f_EA=true"
+
+    #     level = 1
+    #     experience_level = parameters.get('experienceLevel', [])
+    #     experience_url = "f_E="
+    #     for key in experience_level.keys():
+    #         if experience_level[key]:
+    #             experience_url += "%2C" + str(level)
+    #         level += 1
+
+    #     distance_url = "?distance=" + str(parameters['distance'])
+
+    #     job_types_url = "f_JT="
+    #     job_types = parameters.get('jobTypes', [])
+    #     # job_types = parameters.get('experienceLevel', [])
+    #     for key in job_types:
+    #         if job_types[key]:
+    #             job_types_url += "%2C" + key[0].upper()
+
+    #     date_url = ""
+    #     dates = {"all time": "", "month": "&f_TPR=r2592000", "week": "&f_TPR=r604800", "24 hours": "&f_TPR=r86400"}
+    #     date_table = parameters.get('date', [])
+    #     for key in date_table.keys():
+    #         if date_table[key]:
+    #             date_url = dates[key]
+    #             break
+
+    #     easy_apply_url = "&f_AL=true"
+
+    #     extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, job_types_url, experience_url]
+    #     extra_search_terms_str = '&'.join(
+    #         term for term in extra_search_terms if len(term) > 0) + easy_apply_url + date_url
+
+    #     return extra_search_terms_str
+        
     def get_base_search_url(self, parameters):
-        remote_url = ""
-        lessthanTenApplicants_url = ""
-
-        if parameters.get('remote'):
-            remote_url = "&f_WT=2"
-        else:
             remote_url = ""
-            # TO DO: Others &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
+            lessthanTenApplicants_url = ""
 
-        if parameters['lessthanTenApplicants']:
-            lessthanTenApplicants_url = "&f_EA=true"
+            if parameters.get('remote'):
+                remote_url = "&f_WT=2"
+            else:
+                remote_url = ""  # TO DO: Other &f_WT= options { WT=1 onsite, WT=2 remote, WT=3 hybrid, f_WT=1%2C2%2C3 }
 
-        level = 1
-        experience_level = parameters.get('experienceLevel', [])
-        experience_url = "f_E="
-        for key in experience_level.keys():
-            if experience_level[key]:
-                experience_url += "%2C" + str(level)
-            level += 1
+            if parameters['lessthanTenApplicants']:
+                lessthanTenApplicants_url = "&f_EA=true"
 
-        distance_url = "?distance=" + str(parameters['distance'])
+            level = 1
+            experience_level = parameters.get('experienceLevel', [])
+            experience_url = "f_E="
+            for key in experience_level.keys():
+                if experience_level[key]:
+                    experience_url += "%2C" + str(level)
+                level += 1
 
-        job_types_url = "f_JT="
-        job_types = parameters.get('jobTypes', [])
-        # job_types = parameters.get('experienceLevel', [])
-        for key in job_types:
-            if job_types[key]:
-                job_types_url += "%2C" + key[0].upper()
+            distance_url = "?distance=" + str(parameters['distance'])
 
-        date_url = ""
-        dates = {"all time": "", "month": "&f_TPR=r2592000", "week": "&f_TPR=r604800", "24 hours": "&f_TPR=r86400"}
-        date_table = parameters.get('date', [])
-        for key in date_table.keys():
-            if date_table[key]:
-                date_url = dates[key]
-                break
+            job_types_url = "f_JT="
+            job_types = parameters.get('jobTypes', [])
+            for key in job_types:
+                if job_types[key]:
+                    job_types_url += "%2C" + key[0].upper()
 
-        easy_apply_url = "&f_AL=true"
+            # Apply the 24-hour filter by default
+            date_url = "&f_TPR=r86400"
 
-        extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, job_types_url, experience_url]
-        extra_search_terms_str = '&'.join(
-            term for term in extra_search_terms if len(term) > 0) + easy_apply_url + date_url
+            easy_apply_url = "&f_AL=true"
 
-        return extra_search_terms_str
+            # Combine all parts of the URL
+            extra_search_terms = [distance_url, remote_url, lessthanTenApplicants_url, job_types_url, experience_url]
+            extra_search_terms_str = '&'.join(
+                term for term in extra_search_terms if len(term) > 0) + easy_apply_url + date_url
+
+            return extra_search_terms_str
 
     def next_job_page(self, position, location, job_page):
         self.browser.get("https://www.linkedin.com/jobs/search/" + self.base_search_url +

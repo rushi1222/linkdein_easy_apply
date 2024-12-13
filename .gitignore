@@ -1,0 +1,24 @@
+# Virtual environment
+.venv/
+__pycache__/
+
+# Configuration and sensitive files
+config.yaml
+uscis_backupcode.txt
+linkdeinrecruiter.txt
+
+# Temporary or output files
+*.csv
+*.pbix
+output.csv
+failed.csv
+real_jobs_with_counts.csv
+real_jobs_with_h1b.csv
+recent_real_jobs_with_counts.csv
+recent_real_jobs_with_h1b.csv
+
+# Logs or debug notes
+notes.txt
+
+# System files
+.DS_Store

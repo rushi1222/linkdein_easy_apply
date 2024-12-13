@@ -1,7 +1,7 @@
 # Add your LinkedIn email ID and password.
 # *** WARNING: KEEP THIS CONFIG OFFLINE ON YOUR PC AND DO NOT COMMIT/UPLOAD ***
-email: email@domain.com
-password: yourpassword
+email: k.saraswathi1222@gmail.com
+password: Pandu122@
 
 # Anti-lock default is False to prevent your PC from sleeping to
 # allow bot to run uninterrupted. Set it to True if you wish  to
@@ -44,6 +44,9 @@ date:
 # Remove hash sign to add positions. You can add as many as you need,
 # but preserve formatting
 positions:
+# - React Developer
+# - Angular Developer
+- Frontend Developer
  #- First position
  #- A second position
  #- A third position
@@ -53,7 +56,8 @@ positions:
 # including adding 'Remote' as a location but first location must be
 # a valid country.
 locations:
- #- First location
+- United States
+
  #- A second location
  #- A third location
  #- ...
@@ -107,7 +111,7 @@ checkboxes:
  # above, and same with legallyAuthorized.
  requireVisa: False
  # Are you legally authorized to work in COUNTRY? (yes/no checkbox)
- legallyAuthorized: False
+ legallyAuthorized: True
  # Do you have necessary licenses or certifications required in your
  # profession? E.g. CPA, CA, CFA, professional license
  certifiedProfessional: True
@@ -132,7 +136,7 @@ checkboxes:
   # - High School Diploma
   # - Bachelor's Degree
   # - Associate's Degree
-  # - Master's Degree
+  - Master's Degree
   # - Master of Business Administration
   # - Doctor of Philosophy
   # - Doctor of Medicine
@@ -140,12 +144,16 @@ checkboxes:
  # Are you willing to undergo a background check, in accordance with local
  # law/regulations?
  backgroundCheck: True
+ functionalDeviceBrowserTesting: False  # Example for functional, device, and browser testing
+ localToPA: False  # Example for being local to PA
+ fullTimeNoSponsorship: True  # Example for full-time role without sponsorship
+ readyToWorkOnW2: True  # Example for W2 work
 
 # ------------ Additional parameters: universityGpa ---------------
-universityGpa: 3.0
+universityGpa: 3.7
 
 # ------------ Additional parameters: salaryMinimum ---------------
-salaryMinimum: 35000
+salaryMinimum: 70000
 
 # ------------ Additional parameters: languages ---------------
 languages:
@@ -206,7 +214,7 @@ experience:
  Financial markets: 0
  Business: 0
  Financial services: 0
- Team leadership: 0
+ Team leadership: 2
  Cash flow: 0
  Hedging: 0
  Treasury services: 0
@@ -218,6 +226,143 @@ experience:
  FP&A: 0
  PQE: 0
  Training & Development: 0
+ Software Development: 8
+ Frontend Development: 8
+ Frontend: 8
+ Frontend Engineer: 8
+ Javascript: 8
+ Typescript: 6
+ AWS: 0
+ Azure: 2
+ Java: 2
+ NodeJS: 4
+ PHP: 2
+ WebDevelopment: 8
+ ProductDevelopmentLeadRole: 2
+ FullStackDevelopment: 8
+ FullStack: 8
+ OAuth2: 2
+ ReactReduxPython: 8
+ Spring: 2
+ PostgreSQL: 2
+ MySQL: 2
+ React: 8
+ Auditing: 0
+ MongoDB: 8
+ NoSQL: 8
+ Angular: 8
+ CSS: 8
+ Redux.js: 8
+ iOS: 1
+ Android: 1
+ PeopleSoft: 0
+ PeopleTools: 0
+ SQR: 0
+ HTML: 5
+ Bootstrap: 3
+ Mobile Applications: 2
+ Microsoft 365: 2
+ Kotlin: 2
+ Android Jetpack: 1
+ Debugging: 3
+ Microservices: 2
+ Python: 3
+ AEM: 0
+ Maven: 2
+ Databases: 8
+ Relational Databases: 8
+ Hibernate: 8
+ Fastlane: 8
+ REST: 8
+ Servlets: 8
+ JSON: 8
+ RPG: 0
+ Application Development: 8
+ CI/CD: 8
+ CNC: 0
+ Programming: 8
+ Machine Tools: 0
+ Engineering : 8
+ sql: 8
+ GraphQL: 4
+ django: 4
+ Redux: 8
+ NgRx: 8
+ AngularJS: 8
+ Angular 2: 8
+ Angular 4: 8
+ Angular 5: 8
+ Angular 6: 8
+ Angular 7: 8
+ Angular 8: 8
+ Angular 9: 8
+ Angular 10: 8
+ Angular 11: 8
+ Angular 12: 8
+ Angular 13: 8
+ Angular 14: 8
+ Angular 15: 8
+ Angular 16: 8
+ Angular 17: 8
+ Angular 18: 8
+ Dependency Injection: 8
+ RxJS: 8
+ Ngrx: 8
+ Angular Material: 8
+ Angular Flex Layout: 8
+ Angular Universal: 8
+ Angular Elements: 8
+ unit testing: 8
+ W2: True
+ SQL: 8
+ Objective-C: 8
+ Django: 8
+ GraphQL: 8
+ Web Content Accessibility Guidelines (WCAG): 8
+ ADA Compliance: 8
+ Node.js: 8
+ Backbone.js: 8
+ Vue.js: 8
+ C# in .NET: 8
+ C++: 8
+ Microservices: 8
+ Software design: 8
+ Visual C++: 8
+ PropTech: 8
+ Event-driven architectures: 8
+ XML: 8
+ Webpack: 8
+ User Interface (UI) Design: 8
+ User Experience (UX): 8
+ Flutter: 8
+ API development: 8
+ RDBMS: 8
+ Unix: 8
+ ASP.NET: 8
+ .NET Core: 8
+ Full-Stack Development: 8
+ Machine Learning: 8
+ Data Visualization: 8
+ RxJS: 8
+ Firebase: 8
+ Jakarta EE: 8
+ Laravel: 8
+ SOAP: 8
+ SAP: 8
+ OpenShift: 8
+ Retool: 8
+ TypeScript: 8
+ Adobe Experience Platform (AEP): 8
+ Amazon Web Services (AWS): 8
+ Figma: 8
+ Routers: 8
+ Eclipse: 8
+ Firmware/Embedded systems: 8
+ Front-End Development: 8
+ Artificial Intelligence (AI): 8
+ MobX: 8
+ LLMs (Large Language Models): 8
+ JBoss Application Server: 8
  #python: 0
  #selenium: 0
  # default to put for any industry/skill that you did not list
@@ -226,23 +371,26 @@ experience:
 # ------------ Additional parameters: personal info ---------------
 personalInfo:
  Pronouns: Mr.
- First Name: FirstName
- Last Name: LastName
- Phone Country Code: Canada (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
- Mobile Phone Number: 1234567890
- Street address: 123 Fake Street
- City: Red Deer, Alberta # Include the state/province as well!
- State: YourState
- Zip: YourZip/Postal
- Linkedin: https://www.linkedin.com/in/my-linkedin-profile
- Website: https://www.my-website.com # github/website is interchangeable here
+ First Name: RUSHIDEEP
+ Last Name: KOTAMRAJU
+ Phone Country Code: USA (+1) # See Linkedin for your country code, must be exact according to the international platform, i.e. Italy (+39) not Italia (+39)
+ Mobile Phone Number: 2017411028
+ Street address: 948 west side ave
+ City: Jersey City  # Include the state/province as well!
+ State: New Jersey
+ Zip: 07306
+ Linkedin: https://www.linkedin.com/in/rushideep/
+ Website: https://github.com/rushi1222 # github/website is interchangeable here
  MessageToManager: "Hi, I am interested to join your organization. Please have a look at my resume. Thank you." # Keep message short and within the quotes. This is a testing feature and may not work.
 
 # ------------ Additional parameters: USA employment crap ---------------
 eeo:
- gender: None
- race: None
- veteran: None
- disability: None
- citizenship: yes
- clearance: no
+ gender: Male
+ race: Asian
+ veteran: No
+ disability: No
+ citizenship: No
+ clearance: Yes
+
+W2: True
+office: True
